@@ -1,15 +1,21 @@
 using Microsoft.AspNetCore.Mvc;
 using System.Linq;
 using StudentsApi.Models;
+using StudentsApi.Data;
 [Route("students")]
 [ApiController]
 public class StudentController: ControllerBase
 {   
+    private StudentContext db { get; set; }
+    public StudentController(StudentContext _db)
+    {
+        db = _db;
+    }
     [HttpGet]
     [Route("all")]
     public ActionResult GetAllStudents()
     {   
-        var students= new string[]{"Cosmic", "Pars"};
+        var students= db.Students.ToList();
 
         if(students == null)
             return NotFound();
@@ -21,9 +27,8 @@ public class StudentController: ControllerBase
     [Route("{name}")]
     public ActionResult  GetStudentById(string name)
     {
-        var students = new string[] {"Dipesh", "Paras"};
 
-        var student = students.Where(x => x == name).FirstOrDefault();
+        var student = db.Students.Find(name);
         if(student == null)
         {
             return NotFound();
@@ -36,6 +41,9 @@ public class StudentController: ControllerBase
 
     public ActionResult CreateStudent(Student student)
     {
+        db.Students.Add(student);
+        db.SaveChanges();
+
         if(student==null)
         return BadRequest();
 
@@ -47,6 +55,9 @@ public class StudentController: ControllerBase
 
     public ActionResult DeleteStudent(Student student)
     {
+        db.Students.Attach(student);
+        db.Students.Remove(student);
+        db.SaveChanges();
         if(student==null)
         return BadRequest();
 
@@ -57,6 +68,9 @@ public class StudentController: ControllerBase
 
     public ActionResult UpdateStudent(Student student)
     {
+        db.Students.Attach(student);
+        db.Students.Update(student);
+        db.SaveChanges();
         if(student==null)
         return BadRequest();
 

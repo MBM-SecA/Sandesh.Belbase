@@ -10,6 +10,9 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using StudentsApi.Models;
+using Microsoft.EntityFrameworkCore;
+using StudentsApi.Data;
 
 namespace StudentsApi
 {
@@ -26,6 +29,7 @@ namespace StudentsApi
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
+            services.AddDbContext<StudentContext>(Options=> Options.UseSqlite(@"Data Source=Students.db"));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
